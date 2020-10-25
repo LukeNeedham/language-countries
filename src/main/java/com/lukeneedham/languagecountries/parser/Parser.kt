@@ -1,7 +1,10 @@
 package com.lukeneedham.languagecountries.parser
 
+import com.lukeneedham.languagecountries.Language
+import com.lukeneedham.languagecountries.AllLanguages
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import java.io.File
-import java.lang.StringBuilder
 
 internal object Parser {
 
@@ -10,13 +13,13 @@ internal object Parser {
         val inputDir = File(inputFolderPath)
         val inputFile = File(inputDir, "language.csv")
         val otherNamesFile = File(inputDir, "other_names.tsv")
-        val outputFile = File(outputDir, "LanguageCountries.java")
+        val outputFile = File(outputDir, "data.json")
 
         val languages = readEntries(inputFile)
         val languagesWithOtherNames = addOtherNames(otherNamesFile, languages)
         val uniqueLanguages = mergeDuplicateCodes(languagesWithOtherNames)
 
-        writeToEnum(outputFile, uniqueLanguages)
+        writeToFile(outputFile, uniqueLanguages)
     }
 
     private fun readEntries(inputFile: File): List<RawLanguage> {
@@ -36,7 +39,7 @@ internal object Parser {
         }
     }
 
-    private fun addOtherNames(otherNamesFile: File, languages: List<RawLanguage>): List<ResultLanguage> {
+    private fun addOtherNames(otherNamesFile: File, languages: List<RawLanguage>): List<Language> {
         val otherNamesEntries = otherNamesFile.readLines().toMutableList()
         otherNamesEntries.removeAt(0)
 
@@ -64,15 +67,15 @@ internal object Parser {
             val rawCode = updatedRawLanguage.code
 
             val otherNamesData = otherNamesMap[rawCode]
-                ?: return@map ResultLanguage(rawCode, listOf(rawLanguage.name), rawLanguage.countryCodes)
+                ?: return@map Language(rawCode, listOf(rawLanguage.name), rawLanguage.countryCodes)
             val names = listOf(rawLanguage.name, otherNamesData.name)
             val autonyms = otherNamesData.autonyms
             val allNames = (names + autonyms).distinct()
-            ResultLanguage(rawCode, allNames, rawLanguage.countryCodes)
+            Language(rawCode, allNames, rawLanguage.countryCodes)
         }
     }
 
-    private fun mergeDuplicateCodes(languages: List<ResultLanguage>): List<ResultLanguage> {
+    private fun mergeDuplicateCodes(languages: List<Language>): List<Language> {
         val duplicateCodes = languages.groupingBy { it.code }
             .eachCount()
             .filter { it.value > 1 }
@@ -95,7 +98,7 @@ internal object Parser {
                 allCountryCodes.addAll(it.countryCodes)
             }
 
-            val mergedLanguage = ResultLanguage(code, allNames.distinct(), allCountryCodes.distinct())
+            val mergedLanguage = Language(code, allNames.distinct(), allCountryCodes.distinct())
             resultLanguages.add(mergedLanguage)
         }
 
@@ -104,68 +107,14 @@ internal object Parser {
         return resultLanguages
     }
 
-    private fun writeToEnum(outputFile: File, uniqueLanguages: List<ResultLanguage>) {
-        val outputText = StringBuilder()
-        outputText.append(
-            """package com.lukeneedham.languagecountries;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-public enum LanguageCountries {"""
-        )
-        uniqueLanguages.forEachIndexed { index, resultLanguage ->
-            val nameTextsToRemove = listOf("(", ")", "'", "/", "|", "=", "\"", "!", ":", ".")
-            val nameTextsToConvert = listOf(" ", "-")
-            var name = resultLanguage.names.first()
-            nameTextsToRemove.forEach {
-                name = name.replace(it, "")
-            }
-            nameTextsToConvert.forEach {
-                name = name.replace(it, "_")
-            }
-
-            val code = resultLanguage.code
-            val formattedCode = if (code == null) null else "\"${code}\""
-
-            outputText.append("""
-    $name(
-        $formattedCode, 
-        new String[] {${
-                resultLanguage.names.joinToString(", ") {
-                    val escaped = it.replace("\"", "\\\"")
-                    "\"$escaped\""
-                }
-            }},
-        new String[] {${resultLanguage.countryCodes.joinToString(", ") { "\"$it\"" }}}
-    )"""
-            )
-            val separator = if (index != uniqueLanguages.lastIndex) "," else ";"
-            outputText.append(separator)
-        }
-
-        outputText.append(
-            """
-                
-    /** ISO-639-3 code of language */
-    public @Nullable String code;
-    
-    /** All names of language */
-    public @NotNull String[] names;
-    
-    /** List of ISO 3166-1 alpha-2 country codes */
-    public @NotNull String[] countryCodes;
-    
-    private LanguageCountries(@Nullable String code, @NotNull String[] names, @NotNull String[] countryCodes) {
-        this.code = code;
-        this.names = names;
-        this.countryCodes = countryCodes;
-    }
-}
-"""
-        )
-
-        outputFile.writeText(outputText.toString())
+    private fun writeToFile(outputFile: File, uniqueLanguages: List<Language>) {
+        val languageGroup = AllLanguages(uniqueLanguages)
+        val moshi = Moshi.Builder()
+            .addLast(KotlinJsonAdapterFactory())
+            .build()
+        val adapter = moshi.adapter(AllLanguages::class.java)
+        val json = adapter.toJson(languageGroup)
+        outputFile.writeText(json)
     }
 
     private data class RawLanguage(
@@ -182,14 +131,5 @@ public enum LanguageCountries {"""
         val code: String,
         val name: String,
         val autonyms: List<String>
-    )
-
-    private data class ResultLanguage(
-        /** ISO-639-3 code of language */
-        val code: String?,
-        /** All names of language */
-        val names: List<String>,
-        /** List of ISO 3166-1 alpha-2 country codes */
-        val countryCodes: List<String>
     )
 }
