@@ -112,7 +112,7 @@ internal object Parser {
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-enum LanguageCountries {"""
+public enum LanguageCountries {"""
         )
         uniqueLanguages.forEachIndexed { index, resultLanguage ->
             val nameTextsToRemove = listOf("(", ")", "'", "/", "|", "=", "\"", "!", ":", ".")

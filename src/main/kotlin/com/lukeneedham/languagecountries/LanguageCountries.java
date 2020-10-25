@@ -3,7 +3,7 @@ package com.lukeneedham.com.lukeneedham.languagecountries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-enum LanguageCountries {
+public enum LanguageCountries {
     Arapesh_Abu(
         null, 
         new String[] {"Arapesh (Abu)"},
