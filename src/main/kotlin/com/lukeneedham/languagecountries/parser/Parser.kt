@@ -107,7 +107,7 @@ internal object Parser {
     private fun writeToEnum(outputFile: File, uniqueLanguages: List<ResultLanguage>) {
         val outputText = StringBuilder()
         outputText.append(
-            """package com.lukeneedham.com.lukeneedham.languagecountries;
+            """package com.lukeneedham.languagecountries;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

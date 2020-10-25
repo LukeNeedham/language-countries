@@ -1,4 +1,4 @@
-package com.lukeneedham.com.lukeneedham.languagecountries;
+package com.lukeneedham.languagecountries;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
