@@ -1,4 +1,4 @@
-package parser
+package com.lukeneedham.languagecountries.parser
 
 import java.io.File
 import java.lang.StringBuilder
@@ -107,7 +107,7 @@ internal object Parser {
     private fun writeToEnum(outputFile: File, uniqueLanguages: List<ResultLanguage>) {
         val outputText = StringBuilder()
         outputText.append(
-            """package com.lukeneedham.languagecountries;
+            """package com.lukeneedham.com.lukeneedham.languagecountries;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

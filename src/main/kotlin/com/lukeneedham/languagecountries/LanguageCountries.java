@@ -1,4 +1,4 @@
-package com.lukeneedham.languagecountries;
+package com.lukeneedham.com.lukeneedham.languagecountries;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -12400,4 +12400,3 @@ enum LanguageCountries {
         this.countryCodes = countryCodes;
     }
 }
-        
