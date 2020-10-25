@@ -18,6 +18,11 @@ Use with Jitpack:
 
 [![](https://jitpack.io/v/LukeNeedham/language-countries-kotlin.svg)](https://jitpack.io/#LukeNeedham/language-countries-kotlin)
 
+And then simply use `LanguageCountries.java`.
+
+The generated enum is a java file, rather than a Kotlin file.
+This is to work around a file size limitation which was being hit when using Kotlin inline functions for list initialisation. 
+
 # References
 
 The bulk of the data comes directly from:
