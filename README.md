@@ -3,7 +3,7 @@ This project provides a Kotlin enum (`LanguageCountries`) which provides a numbe
 - A number of its names (both in English and autonyms)
 - A list of ISO 3166-1 alpha-2 country codes, where the language is used
 
-##Method:
+# Method
 
 The parsing of data is done in the internal `Parser` object.
 
@@ -12,7 +12,11 @@ This does some processing, including:
 - Merging languages with the same ISO code, so they are considered alternative names
 - Adding alternative names for each language
 
-##References:
+# Usage
+
+Use with Jitpack:
+
+# References
 
 The bulk of the data comes directly from:
 
