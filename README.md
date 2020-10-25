@@ -16,7 +16,7 @@ This does some processing, including:
 
 Use with Jitpack:
 
-[![](https://jitpack.io/v/LukeNeedham/language-countries-kotlin.svg)](https://jitpack.io/#LukeNeedham/language-countries-kotlin)
+[![](https://jitpack.io/v/LukeNeedham/language-countries.svg)](https://jitpack.io/#LukeNeedham/language-countries)
 
 # References
 
