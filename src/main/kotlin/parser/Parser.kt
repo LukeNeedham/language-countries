@@ -10,7 +10,7 @@ internal object Parser {
         val inputDir = File(inputFolderPath)
         val inputFile = File(inputDir, "language.csv")
         val otherNamesFile = File(inputDir, "other_names.tsv")
-        val outputFile = File(outputDir, "LanguageCountries.kt")
+        val outputFile = File(outputDir, "LanguageCountries.java")
 
         val languages = readEntries(inputFile)
         val languagesWithOtherNames = addOtherNames(otherNamesFile, languages)
@@ -107,16 +107,12 @@ internal object Parser {
     private fun writeToEnum(outputFile: File, uniqueLanguages: List<ResultLanguage>) {
         val outputText = StringBuilder()
         outputText.append(
-            """package com.lukeneedham.languagedata
+            """package com.lukeneedham.languagecountries;
 
-enum class LanguageCountries(
-    /** ISO-639-3 code of language */
-    val code: String?,
-    /** All names of language */
-    val names: List<String>,
-    /** List of ISO 3166-1 alpha-2 country codes */
-    val countryCodes: List<String>
-) {"""
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+enum LanguageCountries {"""
         )
         uniqueLanguages.forEachIndexed { index, resultLanguage ->
             val nameTextsToRemove = listOf("(", ")", "'", "/", "|", "=", "\"", "!", ":", ".")
@@ -135,21 +131,39 @@ enum class LanguageCountries(
             outputText.append("""
     $name(
         $formattedCode, 
-        listOf(${
+        new String[] {${
                 resultLanguage.names.joinToString(", ") {
                     val escaped = it.replace("\"", "\\\"")
                     "\"$escaped\""
                 }
-            }),
-        listOf(${resultLanguage.countryCodes.joinToString(", ") { "\"$it\"" }})
+            }},
+        new String[] {${resultLanguage.countryCodes.joinToString(", ") { "\"$it\"" }}}
     )"""
             )
-            if (index != uniqueLanguages.lastIndex) {
-                outputText.append(",")
-            }
+            val separator = if (index != uniqueLanguages.lastIndex) "," else ";"
+            outputText.append(separator)
         }
 
-        outputText.append("\n}")
+        outputText.append(
+            """
+                
+    /** ISO-639-3 code of language */
+    public @Nullable String code;
+    
+    /** All names of language */
+    public @NotNull String[] names;
+    
+    /** List of ISO 3166-1 alpha-2 country codes */
+    public @NotNull String[] countryCodes;
+    
+    private LanguageCountries(@Nullable String code, @NotNull String[] names, @NotNull String[] countryCodes) {
+        this.code = code;
+        this.names = names;
+        this.countryCodes = countryCodes;
+    }
+}
+"""
+        )
 
         outputFile.writeText(outputText.toString())
     }

@@ -16,6 +16,8 @@ This does some processing, including:
 
 Use with Jitpack:
 
+[![](https://jitpack.io/v/LukeNeedham/language-countries-kotlin.svg)](https://jitpack.io/#LukeNeedham/language-countries-kotlin)
+
 # References
 
 The bulk of the data comes directly from:
