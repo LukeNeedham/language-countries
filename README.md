@@ -1,3 +1,7 @@
+# About
+
+A Kotlin library to provide a dataset of known languages and associated language data. This data includes, for each language, a list of countries where the language is used.
+
 This project provides a Kotlin object (`LanguageProvider`) which provides a number of languages with:
 - Their ISO-639-3 code
 - A number of its names (both in English and autonyms)
