@@ -1,11 +1,11 @@
-This project provides a Kotlin enum (`LanguageCountries`) which provides a number of languages with:
+This project provides a Kotlin object (`LanguageProvider`) which provides a number of languages with:
 - Their ISO-639-3 code
 - A number of its names (both in English and autonyms)
 - A list of ISO 3166-1 alpha-2 country codes, where the language is used
 
 # Method
 
-The parsing of data is done in the internal `Parser` object.
+The parsing of raw data is done in the internal `Parser` object.
 
 This does some processing, including:
 
